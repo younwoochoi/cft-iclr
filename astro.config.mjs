@@ -12,5 +12,7 @@ export default defineConfig({
     shikiConfig: {
       theme: "github-light"
     }
-  }
+  },
+  site: 'https://younwoochoi.github.io',
+  base: 'contextual-fine-tuning-web',
 });
