@@ -1,6 +1,6 @@
 ---
 layout: ../layouts/Layout.astro
-title: Research Project Page Template
+title: Teaching LLMs How to Learn with Contextual Fine-Tuning
 description: Simple project page template for your research paper, built with Astro and Tailwind CSS
 favicon: favicon.svg
 thumbnail: screenshot.png
@@ -20,6 +20,7 @@ import LaTeX from "../components/LaTeX.astro";
 
 import outside from "../assets/outside.mp4";
 import transformer from "../assets/transformer.webp";
+import mainfig from "../assets/mainfig.webp";
 import Splat from "../components/Splat.tsx"
 
 import CodeBlock from "../components/CodeBlock.astro";
@@ -29,69 +30,72 @@ export const components = {pre: CodeBlock, table: Table}
 <Header
   title={frontmatter.title}
   authors={[
+    {},{},
     {
-      name: "Roman Hauksson",
-      url: "https://roman.technology",
-      institution: "Independent",
-      notes: ["*", "†"],
+      name: "Younwoo Choi",
+      notes: ["*"],
     },
     {
-      name: "Author Two",
-      institution: "Institution Two",
-      notes: ["*", "†"],
+      name: "Muhammad Adil Asif",
+      notes: ["*"],
     },
     {
-      name: "Author Three",
-      institution: "Institution Three",
+      name: "Ziwen Han",
       notes: ["†"],
     },
     {
-      name: "Author Four",
-      institution: "Institution Four",
+      name: "John Willes",
+    },
+    {},{},{},{},{},{},{},{},{},{},{},{},{},{},
+    {
+      name: "Rahul G. Krishnan",
+    },
+    {},{},{},{},{},{},{},{},{},
+    {
+      name: "University of Toronto"
+    },
+    {
+      name: "Vector Institute"
     },
   ]}
-  conference="Conference Name"
+  conference="ICLR 2025"
   notes={[
     {
       symbol: "*",
-      text: "author note one",
+      text: "Equal contribution",
     },
     {
       symbol: "†",
-      text: "author note two",
+      text: "Work conducted while at the Vector Institute",
     },
   ]}
   links={[
     {
       name: "Paper",
-      url: "",
+      url: "https://openreview.net/forum?id=FS2nukC2jv",
       icon: "ri:file-pdf-2-line",
     },
     {
       name: "Code",
-      url: "https://github.com/RomanHauksson/academic-project-astro-template",
+      url: "https://github.com/younwoochoi/Contextual-Fine-Tuning",
       icon: "ri:github-line",
     },
     {
-      name: "arXiv",
-      url: "",
-      icon: "academicons:arxiv",
-    },
-    {
-      name: "Bluesky",
-      url: "",
-      icon: "ri:bluesky-line"
+      name: "Dataset",
+      url: "https://huggingface.co/datasets/ywchoi/OpenMedText",
+      icon: "simple-icons:huggingface"
     }
   ]}
   />
 
-<Video source={outside} />
+<Image source={mainfig} altText="Diagram of the transformer deep learning architecture." />
+{/*  ><Video source={outside} */}
 
 <HighlightedSection>
 
 ## Abstract
 
-This is a live demo for a template you can use to create a simple project page for your research paper. See the code for the template and instructions on how to use it yourself [here](https://github.com/RomanHauksson/academic-project-astro-template). It's made with the [Astro web framework](https://astro.build/) and styled with [Tailwind CSS](https://tailwindcss.com/). You write the content in [MDX](https://mdxjs.com/), which enables markdown formatting like **bold**, _italics_, and ~strikethrough~, as well as custom components like <SmallCaps>small caps.</SmallCaps>
+Prompting Large Language Models (LLMs), or providing context on the expected model of operation, is an effective way to steer the outputs of such models to satisfy human desiderata after they have been trained. But in rapidly evolving domains, there is often need to fine-tune LLMs to improve either the kind of knowledge in their memory or their abilities to perform open ended reasoning in new domains. When human's learn new concepts, we often do so by linking the new material that we are studying to concepts we have already learned before. To that end, we ask, "can prompting help us teach LLMs how to learn". In this work, we study a novel generalization of instruction tuning, called contextual fine-tuning, to fine-tune LLMs. Our method leverages instructional prompts designed to mimic human cognitive strategies in learning and problem-solving to guide the learning process during training, aiming to improve the model’s interpretation and understanding of domain-specific knowledge. We empirically demonstrate that this simple yet effective modification improves the ability of LLMs to be fine-tuned rapidly on new datasets both within the medical and financial domains.
 
 </HighlightedSection>
 
@@ -147,13 +151,100 @@ You can add simple tables using [GitHub Flavored Markdown syntax](https://docs.g
 | DistilBERT | 0.86 | 0.84 | 2.1 |
 | XLNet | 0.90 | 0.89 | 6.8 |
 
+
+## Method
+
+We explore:
+1. **Fixed, manually designed prompts** inspired by strategies for effective human learning (focusing on key concepts, critical analysis, bridging new and old knowledge, etc.).
+2. **Text-adaptive prompts** generated automatically by another LLM (GPT-4-style model), which tailors the prompt based on the current training text.
+
+## OpenMedText
+
+To test domain adaptation in a challenging setting, we curated a biomedical dataset of 121,489 biomedical journal articles (MDPI) and 29 open-source medical textbooks. This differs from PubMed or PMC because it includes educational textbooks with explanatory text. We release <em>OpenMedText</em> as a resource for domain adaptation research.
+
+
+## Experiments
+
+We evaluate on both **financial** and **medical** tasks to show the effectiveness of CFT. 
+
+**Financial tasks** include FiQA sentiment analysis, MultiFin headline classification, and Causal20 (classifying cause vs. noise).  
+**Medical tasks** include subsets of MMLU (Anatomy, Clinical Knowledge, College Biology, College Medicine, Medical Genetics, Professional Medicine) and the MedQA professional exam dataset.
+
+### Setup
+
+- We fine-tune LLaMA2-based models of size 7B and 13B.  
+- We compare baseline Chat (no further domain adaptation), Chat (CPT), and Chat (CFT) for each domain’s training corpus.  
+- We measure zero-shot performance on the downstream tasks.
+
+### Results
+
+Below are sample results (see paper for full details).
+
+<Figure caption="Medical Benchmarks (Zero-shot) using Llama 2 7B.">
+  <Table>
+    <thead>
+      <tr>
+        <th>Method</th>
+        <th>Anatomy</th>
+        <th>Clinical</th>
+        <th>College Bio</th>
+        <th>College Med</th>
+        <th>Med Genetics</th>
+        <th>Prof Med</th>
+        <th>MedQA</th>
+        <th>Avg</th>
+      </tr>
+    </thead>
+    <tbody>
+      <tr>
+        <td>Chat (baseline)</td>
+        <td>44.07</td>
+        <td>46.79</td>
+        <td>48.61</td>
+        <td>39.02</td>
+        <td>49.00</td>
+        <td>48.90</td>
+        <td>38.96</td>
+        <td>45.05</td>
+      </tr>
+      <tr>
+        <td>Chat (CPT)</td>
+        <td>45.19</td>
+        <td>47.17</td>
+        <td>49.31</td>
+        <td>43.93</td>
+        <td>50.50</td>
+        <td>46.32</td>
+        <td>39.28</td>
+        <td>45.96</td>
+      </tr>
+      <tr>
+        <td><strong>Chat (CFT)</strong></td>
+        <td><strong>48.15</strong></td>
+        <td><strong>48.87</strong></td>
+        <td><strong>52.08</strong></td>
+        <td><strong>44.22</strong></td>
+        <td><strong>54.00</strong></td>
+        <td>46.69</td>
+        <td><strong>40.65</strong></td>
+        <td><strong>47.81</strong></td>
+      </tr>
+    </tbody>
+  </Table>
+</Figure>
+
+We see consistent gains from CFT. Similar trends appear at 13B scale, and for th
+
+
 ## BibTeX citation
 
 ```bibtex
-@misc{roman2024academic,
-  author = "{Roman Hauksson}",
-  title = "Academic Project Page Template",
-  year = "2024",
-  howpublished = "\url{https://research-template.roman.technology}",
+@inproceedings{
+choi2025teaching,
+title={Teaching {LLM}s How To Learn with Contextual Fine-Tuning},
+author={Younwoo Choi and Muhammad Adil Asif and Ziwen Han and John Willes and Rahul Krishnan},
+booktitle={The Thirteenth International Conference on Learning Representations},
+year={2025},
+url={https://openreview.net/forum?id=FS2nukC2jv}
 }
 ```
