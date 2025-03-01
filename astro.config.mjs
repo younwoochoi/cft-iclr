@@ -14,5 +14,5 @@ export default defineConfig({
     }
   },
   site: 'https://younwoochoi.github.io',
-  base: 'contextual-fine-tuning-web',
+  base: 'cft-iclr',
 });
