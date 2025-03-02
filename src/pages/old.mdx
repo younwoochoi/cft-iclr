@@ -99,6 +99,65 @@ Prompting Large Language Models (LLMs), or providing context on the expected mod
 
 </HighlightedSection>
 
+## Figures
+
+Use the figure component to display images, videos, equations, or any other element, with an optional caption.
+
+<Figure
+    caption="Diagram of the transformer deep learning architecture."
+  >
+    <Image source={transformer} altText="Diagram of the transformer deep learning architecture." />
+</Figure>
+
+## Two columns
+
+Use the two columns component to display two columns of content. In this example, the first column contains a figure with a YouTube video and the second column contains a figure with a custom [React](https://react.dev/) component. By default, they display side by side, but if the screen is narrow enough (for example, on mobile), they're arranged vertically.
+
+<TwoColumns>
+  <Figure slot="left" caption="Take a look at this YouTube video.">
+    <YouTubeVideo videoId="wjZofJX0v4M" />
+  </Figure>
+  <Figure slot="right" caption="Now look at this Gaussian Splat, rendered with a React component.">
+    <Splat client:idle />
+  </Figure>
+</TwoColumns>
+
+## Heading levels
+
+Use headings to divide your content into sections.
+
+### Heading 3
+
+Go down a level to heading 3...
+
+#### Heading 4
+
+...and down again to heading 4.
+
+## LaTeX
+
+You can also add LaTeX formulas, rendered during the build process using [KaTeX](https://katex.org/) so they're quick to load for visitors of your project page. You can write them inline, like this: <LaTeX inline formula="a^2 + b^2 = c^2" />. Or, you can write them as a block:
+
+<LaTeX formula="\int_a^b f(x) dx" />
+
+## Tables
+
+You can add simple tables using [GitHub Flavored Markdown syntax](https://docs.github.com/en/get-started/writing-on-github/working-with-advanced-formatting/organizing-information-with-tables):
+
+| Model | Accuracy | F1 score | Training time (hours) |
+| :--- | :---: | :---: | :---: |
+| BERT-base | 0.89 | 0.87 | 4.5 |
+| RoBERTa-large | 0.92 | 0.91 | 7.2 |
+| DistilBERT | 0.86 | 0.84 | 2.1 |
+| XLNet | 0.90 | 0.89 | 6.8 |
+
+
+## Method
+
+We explore:
+1. **Fixed, manually designed prompts** inspired by strategies for effective human learning (focusing on key concepts, critical analysis, bridging new and old knowledge, etc.).
+2. **Text-adaptive prompts** generated automatically by another LLM (GPT-4-style model), which tailors the prompt based on the current training text.
+
 ## OpenMedText
 
 To test domain adaptation in a challenging setting, we curated a biomedical dataset of 121,489 biomedical journal articles (MDPI) and 29 open-source medical textbooks. This differs from PubMed or PMC because it includes educational textbooks with explanatory text. We release <em>OpenMedText</em> as a resource for domain adaptation research.
