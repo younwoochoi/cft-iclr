@@ -99,82 +99,69 @@ Prompting Large Language Models (LLMs), or providing context on the expected mod
 
 </HighlightedSection>
 
+## Overview
+
+Contextual Fine-Tuning (CFT) is a novel approach that blends in-context learning with gradient-based learning to improve how Large Language Models (LLMs) learn domain-specific knowledge. Unlike traditional continued pre-training or instruction fine-tuning, CFT uses contextual prompts to guide the model's learning process.
+
 ## OpenMedText
 
-To test domain adaptation in a challenging setting, we curated a biomedical dataset of 121,489 biomedical journal articles (MDPI) and 29 open-source medical textbooks. This differs from PubMed or PMC because it includes educational textbooks with explanatory text. We release <em>OpenMedText</em> as a resource for domain adaptation research.
-
+To test domain adaptation in a challenging setting, we curated a biomedical dataset of 121,489 biomedical journal articles (MDPI) and 29 open-source medical textbooks. We release <em>OpenMedText</em> as a resource for domain adaptation research.
 
 ## Experiments
 
-We evaluate on both **financial** and **medical** tasks to show the effectiveness of CFT. 
+We evaluate on both **medical** and **financial** tasks to show the effectiveness of CFT. 
 
-**Financial tasks** include FiQA sentiment analysis, MultiFin headline classification, and Causal20 (classifying cause vs. noise).  
-**Medical tasks** include subsets of MMLU (Anatomy, Clinical Knowledge, College Biology, College Medicine, Medical Genetics, Professional Medicine) and the MedQA professional exam dataset.
+**Medical tasks** include subsets of MMLU including Anatomy, Clinical Knowledge, College Biology, College Medicine, Medical Genetics, Professional Medicine, and the MedQA professional exam dataset.
+
+**Financial tasks** include FiQA sentiment analysis, MultiFin headline classification, and Causal20.  
+
 
 ### Setup
 
-- We fine-tune LLaMA2-based models of size 7B and 13B.  
-- We compare baseline Chat (no further domain adaptation), Chat (CPT), and Chat (CFT) for each domain’s training corpus.  
+- We fine-tune Llama 2 models of size 7B and 13B.  
+- We compare baseline Chat, Chat with continued pre-training (CPT), and Chat (CFT) for each domain’s training corpus.  
 - We measure zero-shot performance on the downstream tasks.
 
-### Results
+### Results (Medical Domain)
 
-Below are sample results (see paper for full details).
+#### 7B Model Results
+| Model (7B) | Anatomy | Clinical Knowledge | College Biology | College Medicine | Medical Genetics | Professional Medicine | MedQA | Average |
+|:----------:|:-------:|:-----------------:|:--------------:|:----------------:|:----------------:|:----------------------:|:------:|:-------:|
+| Chat       | 44.07   | 46.79             | 48.61          | 39.02            | 49.00            | **48.90**              | 38.96  | 45.05   |
+| Chat (CPT) | 45.19   | 47.17             | 49.31          | 43.93            | 50.50            | 46.32                  | 39.28  | 45.96   |
+| Chat (CFT) | **48.15** | **48.87**       | **52.08**      | **44.22**        | **54.00**        | 46.69                  | **40.65** | **47.81** |
+| AdaptLLM   | 44.45   | 47.36             | 48.27          | 39.60            | 45.00            | 38.61                  | 37.12  | 42.92   |
 
-<Figure caption="Medical Benchmarks (Zero-shot) using Llama 2 7B.">
-  <Table>
-    <thead>
-      <tr>
-        <th>Method</th>
-        <th>Anatomy</th>
-        <th>Clinical</th>
-        <th>College Bio</th>
-        <th>College Med</th>
-        <th>Med Genetics</th>
-        <th>Prof Med</th>
-        <th>MedQA</th>
-        <th>Avg</th>
-      </tr>
-    </thead>
-    <tbody>
-      <tr>
-        <td>Chat (baseline)</td>
-        <td>44.07</td>
-        <td>46.79</td>
-        <td>48.61</td>
-        <td>39.02</td>
-        <td>49.00</td>
-        <td>48.90</td>
-        <td>38.96</td>
-        <td>45.05</td>
-      </tr>
-      <tr>
-        <td>Chat (CPT)</td>
-        <td>45.19</td>
-        <td>47.17</td>
-        <td>49.31</td>
-        <td>43.93</td>
-        <td>50.50</td>
-        <td>46.32</td>
-        <td>39.28</td>
-        <td>45.96</td>
-      </tr>
-      <tr>
-        <td><strong>Chat (CFT)</strong></td>
-        <td><strong>48.15</strong></td>
-        <td><strong>48.87</strong></td>
-        <td><strong>52.08</strong></td>
-        <td><strong>44.22</strong></td>
-        <td><strong>54.00</strong></td>
-        <td>46.69</td>
-        <td><strong>40.65</strong></td>
-        <td><strong>47.81</strong></td>
-      </tr>
-    </tbody>
-  </Table>
-</Figure>
+- CFT outperforms CPT by 1.85% and significantly outperforms AdaptLLM by 4.89% on average, demonstrating its superior effectiveness for domain adaptation in medical contexts.
 
-We see consistent gains from CFT. Similar trends appear at 13B scale, and for th
+#### 13B Model Results
+| Model (13B) | Anatomy | Clinical Knowledge | College Biology | College Medicine | Medical Genetics | Professional Medicine | MedQA | Average |
+|:-----------:|:-------:|:-----------------:|:--------------:|:----------------:|:----------------:|:----------------------:|:------:|:-------:|
+| Chat        | 51.85   | 56.60             | 54.17          | 46.82            | **63.50**        | 56.99                  | **45.33** | 53.61  |
+| Chat (CPT)  | 50.37   | 60.00             | 55.90          | 50.58            | 62.00            | 57.35                  | 43.95  | 54.31   |
+| Chat (CFT)  | **53.33** | **63.21**       | **57.99**      | **56.35**        | 62.50            | **57.72**              | 44.85  | **56.56** |
+
+- The 13B model shows consistent improvements with CFT, achieving a 2.25% gain over CPT and 2.95% over the baseline Chat model, with strongest performance in Clinical Knowledge, College Biology, and College Medicine tasks.
+
+### Results (Financial Domain)
+
+#### 7B Model Results
+| Model (7B) | FiQA (F1) | Causal20 (F1) | MultiFin (F1) | Average |
+|:----------:|:---------:|:-------------:|:-------------:|:-------:|
+| Chat       | 56.40     | **90.40**     | 38.74         | 61.48   |
+| Chat (CPT) | 62.53     | 90.16         | 38.23         | 63.64   |
+| Chat (CFT) | **67.69** | 90.17         | **46.01**     | **67.96** |
+
+- CFT achieves a 4.32% improvement over CPT, with particularly strong gains in financial sentiment analysis (FiQA) and headline classification (MultiFin).
+
+#### 13B Model Results
+| Model (13B) | FiQA (F1) | Causal20 (F1) | MultiFin (F1) | Average |
+|:-----------:|:---------:|:-------------:|:-------------:|:-------:|
+| Chat        | 61.18     | 84.77         | 45.81         | 63.92   |
+| Chat (CPT)  | 66.96     | **90.06**     | 45.33         | 67.45   |
+| Chat (CFT)  | **70.55** | 89.87         | **50.94**     | **70.45** |
+
+- In financial benchmarks, the 13B model with CFT achieves a 3.0% improvement over CPT and 6.53% over the baseline Chat model, demonstrating CFT's effectiveness scales with model size.
 
 
 ## BibTeX citation
